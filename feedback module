@@ -1,0 +1,113 @@
+import React, { useState, useEffect } from "react";
+const FeedbackModal = ({ isOpen, onClose }) => {
+const [rating, setRating] = useState(null);
+const [feedbacks, setFeedbacks] = useState([]);
+// Load stored feedback ratings from localStorage when component mounts
+useEffect(() => {
+const storedFeedbacks = JSON.parse(localStorage.getItem("feedbackRatings")) || [];
+setFeedbacks(storedFeedbacks);
+}, []);
+// Handles user's rating submission
+const handleSubmit = () => {
+if (rating === null) {
+alert("Please select a rating before submitting.");
+return;
+}
+// Add new rating to feedbacks array  
+const updatedFeedbacks = [...feedbacks, rating];  
+setFeedbacks(updatedFeedbacks);  
+
+// Save updated array to localStorage  
+localStorage.setItem("feedbackRatings", JSON.stringify(updatedFeedbacks));  
+
+// Optional: reset rating or close modal after submit  
+setRating(null);  
+alert("Thank you for your feedback!");  
+onClose();  
+};
+// If the modal is not open, don't render anything
+if (!isOpen) return null;
+return (
+
+
+Please rate your experience
+
+
+{[1, 2, 3, 4, 5].map((num) => (
+<button
+key={num}
+style={{
+...styles.ratingButton,
+backgroundColor: rating === num ? "#4caf50" : "#e0e0e0",
+}}
+onClick={() => setRating(num)}
+>
+{num}
+
+))}
+    <div style={styles.actions}>  
+      <button onClick={onClose} style={styles.cancelButton}>  
+        Cancel  
+      </button>  
+      <button onClick={handleSubmit} style={styles.submitButton}>  
+        Submit  
+      </button>  
+    </div>  
+  </div>  
+</div>  
+);
+};
+// Simple inline styles to keep everything together
+const styles = {
+overlay: {
+position: "fixed",
+top: 0, left: 0, right: 0, bottom: 0,
+backgroundColor: "rgba(0,0,0,0.5)",
+display: "flex",
+justifyContent: "center",
+alignItems: "center",
+zIndex: 1000,
+},
+modal: {
+backgroundColor: "#fff",
+borderRadius: 8,
+width: 300,
+padding: 20,
+boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
+textAlign: "center",
+},
+ratings: {
+display: "flex",
+justifyContent: "space-between",
+margin: "20px 0",
+},
+ratingButton: {
+border: "none",
+borderRadius: "50%",
+width: 40,
+height: 40,
+fontSize: 16,
+cursor: "pointer",
+},
+actions: {
+display: "flex",
+justifyContent: "space-between",
+},
+cancelButton: {
+backgroundColor: "#ccc",
+border: "none",
+padding: "10px 20px",
+borderRadius: 4,
+cursor: "pointer",
+},
+submitButton: {
+backgroundColor: "#4caf50",
+color: "#fff",
+border: "none",
+padding: "10px 20px",
+borderRadius: 4,
+cursor: "pointer",
+},
+};
+export default FeedbackModal;
+
